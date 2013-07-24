@@ -27,7 +27,7 @@ end
 
 # ------------------------------ App ------------------------------
 
-class RedisStress < Sinatra::Base
+class RedisStressor < Sinatra::Base
   COUNTER_LIST = 'test-counter'
   MESSAGE_LIST = 'test-messages'
 

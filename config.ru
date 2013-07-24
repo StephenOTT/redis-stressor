@@ -1,5 +1,5 @@
-require './redis-stress'
+require './redis-stressor'
 require 'sidekiq/web'
 
-run RedisStress
-run Rack::URLMap.new('/' => RedisStress, '/sidekiq' => Sidekiq::Web)
+run RedisStressor
+run Rack::URLMap.new('/' => RedisStressor, '/sidekiq' => Sidekiq::Web)
