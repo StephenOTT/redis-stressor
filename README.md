@@ -3,6 +3,8 @@
 A demo app to test out the Sinatra + Sidekiq + Redis stack. Also
 integrated the Sidekiq dashboard via `config.ru`.
 
+Also contains Bootstrap and jQuery for good measure.
+
 ## Getting Started
 
 Start up Redis:
