@@ -1,0 +1,16 @@
+%h1
+  Redis Stress Test
+
+%div
+  %h2 
+    Smash Test
+    = "(#{@smash_len})"
+  %div= @last_smash
+
+%div
+  %h2
+    Messages
+    = "(#{@message_len})"
+
+  - @messages.each do |msg|
+    %div= msg
