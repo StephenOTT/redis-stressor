@@ -25,6 +25,14 @@ class CounterWorker
   end
 end
 
+class StrToDate
+  def self.parse(obj)
+    return '' if obj.nil?
+    obj = obj[0] if obj.kind_of? Array
+    DateTime.strptime(obj)
+  end
+end
+
 # ------------------------------ App ------------------------------
 
 class RedisStressor < Sinatra::Base
@@ -33,7 +41,7 @@ class RedisStressor < Sinatra::Base
 
   get '/' do
     stats = Sidekiq::Stats.new
-    @last_count = $redis.lrange(COUNTER_LIST, -1, -1)
+    @last_count = StrToDate.parse($redis.lrange(COUNTER_LIST, -1, -1))
     @count_len  = $redis.llen(COUNTER_LIST)
 
     @messages = $redis.lrange(MESSAGE_LIST, 0, -1)
@@ -50,9 +58,7 @@ class RedisStressor < Sinatra::Base
 
   post '/count' do
     log params
-    params[:count].to_i.times do
-      CounterWorker.perform_async
-    end
+    params[:count].to_i.times { CounterWorker.perform_async }
     ok
   end
 
@@ -61,6 +67,7 @@ class RedisStressor < Sinatra::Base
   end
 
   get '/reset' do
+    log 'resetting'
     $redis.del(COUNTER_LIST)
     $redis.del(MESSAGE_LIST)
     ok
