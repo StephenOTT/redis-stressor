@@ -21,27 +21,27 @@ Start up Sinatra:
 
 ## Sending Messages
 
-Send a text message to the app
+Send a text message to the app:
 
     $> curl http://localhost:4567/msg -d "msg=Hello wurld"
 
-Have the app perform a high volume of operations
+Have the app perform a high volume of operations:
 
     $> curl http://localhost:4567/count -d "count=5000"
 
 ## Viewing the Results
 
-Look at the app
+Viewing the results:
 
     $> http://localhost:4567
 
-Check out the Sidekiq dashboard
+Check out the Sidekiq dashboard:
 
     %> http://localhost:4567/sidekiq
 
 ## Resetting the Database
 
-Reset all the values in the app
+Reset all the values in the app:
 
     $> curl http://localhost:4567/reset
 
