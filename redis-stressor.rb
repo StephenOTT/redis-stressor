@@ -7,6 +7,7 @@ require 'sinatra'
 
 $redis = Redis.connect
 
+# Pushes a message into the database
 class MessageWorker
   include Sidekiq::Worker
 
@@ -15,7 +16,8 @@ class MessageWorker
   end
 end
 
-class SmasherWorker
+# Pushes the current date-time into the database
+class CounterWorker
   include Sidekiq::Worker
 
   def perform
@@ -31,8 +33,8 @@ class RedisStress < Sinatra::Base
 
   get '/' do
     stats = Sidekiq::Stats.new
-    @last_smash = $redis.lrange(COUNTER_LIST, -1, -1)
-    @smash_len  = $redis.llen(COUNTER_LIST)
+    @last_count = $redis.lrange(COUNTER_LIST, -1, -1)
+    @count_len  = $redis.llen(COUNTER_LIST)
 
     @messages = $redis.lrange(MESSAGE_LIST, 0, -1)
     @message_len = $redis.llen(MESSAGE_LIST)
@@ -43,22 +45,35 @@ class RedisStress < Sinatra::Base
   post '/msg' do
     log params
     MessageWorker.perform_async params[:msg]
-    status 200
+    ok
    end
 
-  post '/smash' do
+  post '/count' do
     log params
     params[:count].to_i.times do
-      SmasherWorker.perform_async
+      CounterWorker.perform_async
     end
-    log "Done smashing"
-    status 200
+    ok
+  end
+
+  post '/request' do
+
+  end
+
+  get '/reset' do
+    $redis.del(COUNTER_LIST)
+    $redis.del(MESSAGE_LIST)
+    ok
   end
 
   private
 
     def log(msg)
       puts "-- Log: #{msg.inspect}"
+    end
+
+    def ok
+      status 200
     end
 end
 
