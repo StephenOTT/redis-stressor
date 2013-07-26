@@ -5,7 +5,7 @@
     = "(#{@count_len})"
   %div
     Last date: 
-    = @last_count.strftime('%+')
+    = @last_count ? @last_count.strftime('%+') : '-none-'
 
 
 %div

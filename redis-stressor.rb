@@ -7,28 +7,32 @@ require 'sinatra'
 
 $redis = Redis.connect
 
-# Pushes a message into the database
-class MessageWorker
+class RedisWorker
   include Sidekiq::Worker
 
+  def perform(list, value)
+    $redis.lpush(list, value)
+  end
+end
+
+class MessageWorker < RedisWorker
   def perform(msg="Yes, this is message")
-    $redis.lpush('test-messages', msg)
+    super('test-messages', msg)
   end
 end
 
 # Pushes the current date-time into the database
-class CounterWorker
-  include Sidekiq::Worker
-
+class CounterWorker < RedisWorker
   def perform
-    $redis.lpush('test-counter', DateTime.now.to_s)
+    super('test-counter', DateTime.now.to_s)
   end
 end
 
+
 class StrToDate
   def self.parse(obj)
-    return '' if obj.nil?
     obj = obj[0] if obj.kind_of? Array
+    return nil if obj.nil?
     DateTime.strptime(obj)
   end
 end
